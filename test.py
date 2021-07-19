@@ -1,4 +1,12 @@
+"""
+Dependencies:
+colorama==0.4.4
+requests==2.24.0
+tabulate==0.8.9
+"""
+
 from argparse import ArgumentParser
+from math import ceil
 from re import match
 
 import cloudconvert
@@ -12,10 +20,17 @@ parser = ArgumentParser()
 parser.add_argument(dest='file', help='Path to file with keys')
 parser.add_argument('-s', '--structure', dest='structure', action='store_true', help='Test structure of token to match JWT token')
 parser.add_argument('-c', '--credits', dest='credits', action='store_true', help='Print available credits')
-parser.add_argument('-j', '--job', dest='job', action='store_true', help='Test token by creating job (SVG to PNG). Be careful, this will spend one credit!')
+parser.add_argument('-j', '--job', dest='job', action='store_true', help='Test token by creating job (SVG to PNG)')
 parser.add_argument('-f', '--force', dest='force', action='store_true', help='Continue testing current token if previous test was failed')
 
 args = parser.parse_args()
+
+all_keys = 0
+with open(args.file) as file:
+    for key in file:
+        all_keys += 1
+
+percent_per_key = 100 / all_keys
 
 headers = ['Key']
 
@@ -100,6 +115,8 @@ with open(args.file) as file:
                     data[-1].append(False)
                 else:
                     data[-1].append(True)
+
+        print(f'{min(ceil(percent_per_key * line * 100) / 100, 100)}%', end='\r', flush=True)
 
 
 for i in range(len(data)):
