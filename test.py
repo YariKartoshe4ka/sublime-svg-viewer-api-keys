@@ -1,18 +1,15 @@
-"""
-Dependencies:
-colorama==0.4.4
-requests==2.24.0
-tabulate==0.8.9
-"""
-
 from argparse import ArgumentParser
 from math import ceil
 from re import match
+from sys import exit
 
 import cloudconvert
 import colorama
 from tabulate import tabulate
 
+
+print('0.0%', end='\r')
+exit_code = 0
 
 colorama.init()
 
@@ -125,9 +122,11 @@ for i in range(len(data)):
             data[i][j] = f'{colorama.Back.GREEN}Passed{colorama.Style.RESET_ALL}'
         elif data[i][j] is False:
             data[i][j] = f'{colorama.Back.RED}Failed{colorama.Style.RESET_ALL}'
+            exit_code = 1
         elif data[i][j] is None:
             data[i][j] = f'{colorama.Back.LIGHTBLACK_EX}Skipped{colorama.Style.RESET_ALL}'
 
 
 print()
 print(tabulate(data, headers=headers, tablefmt='github'))
+exit(exit_code)
